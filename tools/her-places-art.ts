@@ -167,4 +167,4 @@ const list: NewThing[] = [
   },
 ];
 
-process.exit(commitNew(list, "Ara's places") ? 1 : 0);
+process.exit(commitNew(list, 'her places') ? 1 : 0);
