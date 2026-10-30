@@ -27,6 +27,8 @@ What's next for the game. Her notes (15 pages, 2026-10-18) are the spec; this li
       and 365 days of daily gifts and decorations.
 
 ## Done
+- Part of ARA Games: the hub (`the ARA Games folder`, publishes to https://aramakes.github.io/ara-games/) lists this game
+  and shares one player profile (coins, unlocks, plays) through the `ara-games` IndexedDB; an "ARA Games" button sits on the title when deployed.
 - 20 new salon hairstyles: 5 of Qwen's kept, 15 redrawn by Claude (`tools/real-hair-2.ts`).
 - Post office: miss a day and you get two prizes the next day (never more than two).
 - Open a container (fridges, boxes, jars, baskets, post boxes, shop shelves, counters, the freezer and the ice cream

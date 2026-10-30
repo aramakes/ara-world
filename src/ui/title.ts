@@ -40,12 +40,13 @@ export class TitleScene implements Scene {
   private petals = new Container();
   private title = label('ARA World', 96, COLORS.white);
   private play: Container;
+  private games: Container | null = null;
   private t = 0;
   private real = currentLook() === 'real';
   private size = { w: 0, h: 0 };
   private falling: { s: Sprite; vy: number; sway: number; phase: number; spin: number }[] = [];
 
-  constructor(onPlay: () => void) {
+  constructor(onPlay: () => void, onGames?: () => void) {
     if (this.real) {
       for (const a of titleArt as { id: string; svg: string }[]) templates.set(a.id, { id: a.id, name: a.id, category: 'decor', svg: a.svg });
       this.title = new Text({
@@ -62,13 +63,16 @@ export class TitleScene implements Scene {
       this.play = pillButton('▶  Play', onPlay, 300, 100);
       this.title.style.stroke = { color: COLORS.plum, width: 10, join: 'round' };
     }
+    if (onGames) this.games = pillButton('🎮  ARA Games', onGames, 280, 72);
     this.view.addChild(this.bg, this.roses, this.petals, this.title, this.play);
+    if (this.games) this.view.addChild(this.games);
   }
 
   layout(w: number, h: number): void {
     this.size = { w, h };
     this.title.position.set(w / 2, h * 0.36);
     this.play.position.set(w / 2, h * 0.62);
+    if (this.games) this.games.position.set(w / 2, h * 0.79);
     if (this.real) {
       this.paintBackground(w, h);
       this.garlands(w, h);

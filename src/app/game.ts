@@ -29,6 +29,10 @@ import type { Rig } from '../world/rig.ts';
 import { initLook } from '../art/look.ts';
 import { loadWorld, persist, resetWorld, type World } from '../world/state.ts';
 import { load, save } from './save.ts';
+import { recordPlay } from './player.ts';
+
+/** The ARA Games hub this game is part of (same Pages host). Linked from the title when deployed. */
+const ARA_GAMES_URL = 'https://aramakes.github.io/ara-games/';
 
 /** Where the player was (saved as it changes), so a refresh comes back to the same screen: the map, or a place and
  * floor. null is the title screen. */
@@ -51,6 +55,7 @@ export class Game {
   readonly travelPicker = new TravelPicker();
   private overlay = new Container();
   private musicButton = new Container();
+  private played = false;
   readonly menu: Menu;
 
   constructor(app: Application, stack: SceneStack) {
@@ -106,7 +111,9 @@ export class Game {
     // before building the stack, which would otherwise save the title over it.
     const where = await load<Where>('where', null);
     this.restoring = true;
-    this.stack.push(new TitleScene(() => this.play()));
+    this.stack.push(new TitleScene(() => this.play(),
+      // The hub link only makes sense on the deployed host, not in local dev.
+      location.hostname.endsWith('github.io') ? () => { location.href = ARA_GAMES_URL; } : undefined));
     if (where) {
       this.play();
       if ('place' in where && (places.has(where.place) || this.world.lots[where.place])) {
@@ -130,6 +137,7 @@ export class Game {
   }
 
   play(): void {
+    if (!this.played) { this.played = true; void recordPlay('ara_world').catch(() => undefined); }
     void startMusic();
     this.stack.push(new MapScene(this));
   }
