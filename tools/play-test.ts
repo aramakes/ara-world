@@ -303,10 +303,15 @@ try {
     const openNow = () => inPage<boolean>(`return !!st.thingsOn(ara.world, '__test3', 0).find((t) => /fridge/.test(data.items.get(t.item).template)).open;`);
     await page.mouse.click(at.x, at.y);
     await page.waitForTimeout(400);
-    const opened = await openNow(), panel = await inPage<boolean>('return ara.panel.open;');
+    const opened = await openNow();
+    // Since 2026-10-28 an open container shows its things inside it (each marked `in` with its uid), not in a panel.
+    const inside = await inPage<number>(`
+      const things = st.thingsOn(ara.world, '__test3', 0), f = things.find((t) => /fridge/.test(data.items.get(t.item).template));
+      return things.filter((o) => o.in === f.uid).length;
+    `);
     await shot('10b-fridge-open');
     check('tapping a fridge opens its door (open drawing)', opened, `open ${opened}`);
-    check('an opened fridge shows what is inside', panel);
+    check('an opened fridge shows what is inside', inside > 0, `${inside} things inside`);
     await inPage('ara.panel.hide();');
     await page.mouse.click(at.x, at.y);
     await page.waitForTimeout(300);
